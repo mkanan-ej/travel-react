@@ -9,6 +9,7 @@ import logoImg from './assets/logo.png';
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [pickedPlaces, setPickedPlaces] = useState([]);
   const [availablePlaces, setAvailablePlaces] = useState([])
 
@@ -32,12 +33,12 @@ function App() {
 
 
   function handleStartRemovePlace(id) {
-    modal.current.open();
+    setModalIsOpen(true);
     selectedPlace.current = id;
   }
 
   function handleStopRemovePlace() {
-    modal.current.close();
+    setModalIsOpen(false);
   }
 
   function handleSelectPlace(id) {
@@ -57,7 +58,7 @@ function App() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
-    modal.current.close();
+    setModalIsOpen(false)
 
     const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || [];
     localStorage.setItem('selectedPlaces', JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current)))
@@ -65,12 +66,12 @@ function App() {
 
   return (
     <>
-      <Modal ref={modal}>
-        <DeleteConfirmation
-          onCancel={handleStopRemovePlace}
-          onConfirm={handleRemovePlace}
-        />
-      </Modal>
+      <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
+  <DeleteConfirmation
+    onCancel={handleStopRemovePlace}
+    onConfirm={handleRemovePlace}
+  />
+</Modal>
 
       <header>
         <img src={logoImg} alt="Stylized globe" />
@@ -89,7 +90,7 @@ function App() {
         />
         <Places
           title="Available Places"
-          places={availablePlaces}
+          places={AVAILABLE_PLACES}
           fallbackText="Sorting places by distance..."
           onSelectPlace={handleSelectPlace}
         />
