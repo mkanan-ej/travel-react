@@ -13,6 +13,12 @@ function App() {
   const [availablePlaces, setAvailablePlaces] = useState([])
 
   useEffect(() => {
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || [];
+    const storedPlaces = storedIds.map(id => AVAILABLE_PLACES.find((place) => place.id === id ))
+  })
+
+
+  useEffect(() => {
 
     navigator.geolocation.getCurrentPosition((position) => {
       console.log('Got position:', position);
@@ -52,6 +58,9 @@ function App() {
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     modal.current.close();
+
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || [];
+    localStorage.setItem('selectedPlaces', JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current)))
   }
 
   return (
